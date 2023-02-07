@@ -2,6 +2,7 @@ import discord
 from messaging import remove_user, add_user, get_users, update_moves, get_moves
 import sys, getopt, asyncio
 import sched, time
+from api_hooks import get_player_stars
 
 # ideas: 
 # post daily stats in special channel each day
@@ -48,8 +49,9 @@ async def on_message(message: discord.Message):
         except:
             await(message.reply("Please try again. Usage is <@mention username>"))
     
-    if message.content.startswith("$print"):
-        print(get_users())
+    if message.content.startswith("show"):
+        out = get_player_stars(message.content.split()[1])
+        await(message.reply(out))
 
 async def send_orders():
     users = get_users()
