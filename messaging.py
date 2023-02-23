@@ -7,7 +7,8 @@ moves = {}
 global FILE_PATH
 FILE_PATH = os.environ.get('USER_FILE_PATH') if os.environ.get('USER_FILE_PATH') else "users.json"
 def update_file():
-    json.dump(FILE_PATH)
+    with open(FILE_PATH, "w") as fp:
+        fp.write((json.dumps(users)))
 
 def remove_user(user: str):
     if len(user) > 20:
@@ -19,6 +20,7 @@ def remove_user(user: str):
 
 def add_user(author: discord.User, user: str):
     users[user.split()[1]] = author
+    print(users)
     update_file()
 
 def get_users() -> dict[str, discord.User]:

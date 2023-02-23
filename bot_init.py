@@ -1,6 +1,6 @@
 import discord
 from dpyConsole import Console
-from messaging import remove_user, add_user, get_users, update_moves, get_moves, FILE_PATH
+from messaging import users, remove_user, add_user, get_users, update_moves, get_moves, FILE_PATH
 import sys, getopt, asyncio
 import sched, time
 import json, os
@@ -27,8 +27,13 @@ async def on_ready():
     print(f'{client.user} is now running')
     guilds = [guilds async for guilds in client.fetch_guilds()]
     usr_file = open("users.json", "r")
-    users = json.load(usr_file)
-    usr_file.close()
+    try:
+        user_file = json.load(usr_file)
+        for user in user_file.keys():
+            users[user] == user_file[user]
+        usr_file.close()
+    except:
+        usr_file.close()
 
 @client.event
 async def on_message(message: discord.Message):
@@ -49,7 +54,7 @@ async def on_message(message: discord.Message):
     if client.user in message.mentions and message.channel.name == "risk-star-power-check":
         print("user add command")
         try:
-            add_user(message.author, message.content)
+            add_user(message.author.id, message.content)
             await(send_orders())
         except:
             await(message.reply("Please try again. Usage is <@mention username>"))
@@ -63,10 +68,11 @@ async def send_orders():
     moves = get_moves()
     for user in users.keys():
         if user in moves.keys():
-            await(users[user].send("This is the YJMS reminding you to please make your move " +
+            await(client.get_user(users[user]).send("This is the YJMS reminding you to please make your move " +
             "on " + moves[user]))
 
 @my_console.command()
+# TODO: this stuff doesnt work
 async def read_from_console(message: discord.Message):
     if (message.content and message.content == "help"):
         message.reply("add <reddit> <discord mention>\nclear\nremove <reddit> <discord mention>")
@@ -78,4 +84,5 @@ async def read_from_console(message: discord.Message):
         open(FILE_PATH, "w")
     return
 
+my_console.start()
 client.run(BOT_TOKEN)
