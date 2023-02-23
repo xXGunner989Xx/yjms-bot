@@ -2,6 +2,7 @@ import discord
 from messaging import remove_user, add_user, get_users, update_moves, get_moves
 import sys, getopt, asyncio
 import sched, time
+import json, os
 from api_hooks import get_player_stars
 
 # ideas: 
@@ -9,8 +10,8 @@ from api_hooks import get_player_stars
 # only message users that haven't made a move yet (look at cfbrisk api)
 #
 
-TEST_MODE = True if sys.argv[1].lower() == "test" else False
-TOKEN = sys.argv[2] if sys.argv[2] else None
+BOT_TOKEN = os.environ.get('BOT_TOKEN') if os.environ.get('BOT_TOKEN') else sys.argv[1]
+
 intents = discord.Intents.default()
 intents.message_content = True
 
@@ -22,7 +23,9 @@ roles = []
 async def on_ready():
     print(f'{client.user} is now running')
     guilds = [guilds async for guilds in client.fetch_guilds()]
-    print(guilds)
+    usr_file = open("users.json", "r")
+    users = json.load(usr_file)
+    usr_file.close()
 
 @client.event
 async def on_message(message: discord.Message):

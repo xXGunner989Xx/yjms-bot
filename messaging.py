@@ -1,16 +1,24 @@
 import discord, io
+import json, os
 
 users = {}
 moves = {}
 
+FILE_PATH = os.environ.get('USER_FILE_PATH') if os.environ.get('USER_FILE_PATH') else "users.json"
+def update_file():
+    json.dump(FILE_PATH)
+
 def remove_user(user: str):
     if len(user) > 20:
         print("user invalid\n")
+        return
     if user in users.keys():
         del users[user]
+    update_file()
 
 def add_user(author: discord.User, user: str):
     users[user.split()[1]] = author
+    update_file()
 
 def get_users() -> dict[str, discord.User]:
     return users
