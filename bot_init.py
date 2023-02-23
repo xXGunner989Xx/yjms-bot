@@ -1,5 +1,6 @@
 import discord
-from messaging import remove_user, add_user, get_users, update_moves, get_moves
+from dpyConsole import Console
+from messaging import remove_user, add_user, get_users, update_moves, get_moves, FILE_PATH
 import sys, getopt, asyncio
 import sched, time
 import json, os
@@ -16,6 +17,8 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 client = discord.Client(intents=intents)
+my_console = Console(client)
+
 guilds = []
 roles = []
 
@@ -40,11 +43,10 @@ async def on_message(message: discord.Message):
         user_roles = message.author.roles
         for role in user_roles:
             if role.name == "TECHnicians":
-                print("hi")
                 csv_contents = await(message.attachments[0].read())
                 update_moves(csv_contents)
 
-    if client.user in message.mentions:
+    if client.user in message.mentions and message.channel.name == "risk-star-power-check":
         print("user add command")
         try:
             add_user(message.author, message.content)
@@ -64,5 +66,16 @@ async def send_orders():
             await(users[user].send("This is the YJMS reminding you to please make your move " +
             "on " + moves[user]))
 
+@my_console.command()
+async def read_from_console(message: discord.Message):
+    if (message.content and message.content == "help"):
+        message.reply("add <reddit> <discord mention>\nclear\nremove <reddit> <discord mention>")
+    # will do stuff here later. allow interactions w bot from the console.
+    if (message.content and message.content.split()[0] == "add"):
+        contents = message.content.split()[1:]
+        add_user(message.mentions[0], contents[0])
+    if (message.content and message.content == "clear"):
+        open(FILE_PATH, "w")
+    return
 
-client.run(TOKEN)
+client.run(BOT_TOKEN)

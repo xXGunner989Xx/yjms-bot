@@ -4,6 +4,7 @@ import json, os
 users = {}
 moves = {}
 
+global FILE_PATH
 FILE_PATH = os.environ.get('USER_FILE_PATH') if os.environ.get('USER_FILE_PATH') else "users.json"
 def update_file():
     json.dump(FILE_PATH)
