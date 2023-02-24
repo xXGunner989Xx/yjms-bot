@@ -1,6 +1,6 @@
 import discord
 from dpyConsole import Console
-from messaging import users, remove_user, add_user, get_users, update_moves, get_moves, FILE_PATH
+from messaging import users, remove_user, add_user, update_moves, FILE_PATH
 import sys, getopt, asyncio
 import sched, time
 import json, os
@@ -54,8 +54,8 @@ async def on_message(message: discord.Message):
     if client.user in message.mentions and message.channel.name == "risk-star-power-check":
         print("user add command")
         try:
-            add_user(message.author.id, message.content)
-            await(send_orders())
+            add_user(message.author, message.content.split()[1])
+            #await(send_orders())
         except:
             await(message.reply("Please try again. Usage is <@mention username>"))
     
@@ -63,13 +63,9 @@ async def on_message(message: discord.Message):
         out = get_player_stars(message.content.split()[1])
         await(message.reply(out))
 
+# TODO: rewrite this function lol
 async def send_orders():
-    users = get_users()
-    moves = get_moves()
-    for user in users.keys():
-        if user in moves.keys():
-            await(client.get_user(users[user]).send("This is the YJMS reminding you to please make your move " +
-            "on " + moves[user]))
+    return
 
 @my_console.command()
 # TODO: this stuff doesnt work

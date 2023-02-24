@@ -24,3 +24,22 @@ class Player:
 
     def get_stats(self) -> dict:
         return self.stats
+
+    def serialize(self) -> dict:
+        json_dict = {
+            "id": self.discord_name.id,
+            "reddit_name": self.reddit_name,
+            "stats": self.stats,
+            "latest_move": self.latest_move
+        }
+        print(json_dict)
+        return json_dict
+
+# deserialize a json dict from file into a player class
+async def deserialize(client: discord.Client, player_data: dict):
+    return Player(
+        await(client.fetch_user(player_data["id"])),
+        player_data["reddit_name"],
+        player_data["stats"],
+        player_data["latest_move"],
+    )
